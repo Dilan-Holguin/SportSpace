@@ -11,10 +11,11 @@ type SpaceDraft = {
   campus: string;
   capacity: string;
   usageRules: string;
+  imageUrl: string;
 };
 
 function emptyDraft(): SpaceDraft {
-  return { name: '', type: '', campus: '', capacity: '20', usageRules: '' };
+  return { name: '', type: '', campus: '', capacity: '20', usageRules: '', imageUrl: '' };
 }
 
 function draftFromSpace(space: Space): SpaceDraft {
@@ -24,6 +25,7 @@ function draftFromSpace(space: Space): SpaceDraft {
     campus: space.campus,
     capacity: String(space.capacity),
     usageRules: space.usageRules,
+    imageUrl: space.imageUrl ?? '',
   };
 }
 
@@ -34,6 +36,7 @@ function payloadFromDraft(draft: SpaceDraft) {
     campus: draft.campus.trim(),
     capacity: Number(draft.capacity),
     usageRules: draft.usageRules.trim(),
+    imageUrl: draft.imageUrl.trim() || null,
   };
 }
 
@@ -212,6 +215,7 @@ export function AdminSpacesPage() {
                         {space.type} · {space.campus} · {space.capacity} personas
                       </p>
                       <p>{space.usageRules}</p>
+                      {space.imageUrl ? <p className="muted">{space.imageUrl}</p> : null}
                     </div>
                     <div className="reservation-card__actions">
                       <span className={space.isActive ? 'status-badge status-badge--approved' : 'status-badge'}>
@@ -327,6 +331,17 @@ function SpaceFields({
           disabled={disabled}
           onChange={(event) => update('capacity', event.target.value)}
           required
+        />
+      </label>
+      <label>
+        Foto (opcional)
+        <input
+          id={`${idPrefix}-imageUrl`}
+          name={`${idPrefix}-imageUrl`}
+          value={draft.imageUrl}
+          disabled={disabled}
+          onChange={(event) => update('imageUrl', event.target.value)}
+          placeholder="/spaces/coliseo-robledo.jpg"
         />
       </label>
       <label className="space-admin-fields__rules">

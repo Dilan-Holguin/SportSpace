@@ -47,6 +47,7 @@ export class SpacesService {
         campus: dto.campus.trim(),
         capacity: dto.capacity,
         usageRules: dto.usageRules.trim(),
+        imageUrl: dto.imageUrl ?? null,
         isActive: true,
       },
     });
@@ -72,6 +73,9 @@ export class SpacesService {
     }
     if (dto.isActive !== undefined) {
       data.isActive = dto.isActive;
+    }
+    if (dto.imageUrl !== undefined) {
+      data.imageUrl = dto.imageUrl;
     }
 
     return this.prisma.space.update({

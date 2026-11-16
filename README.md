@@ -99,7 +99,7 @@ La base de datos compartida del anteproyecto **sí aplica** aquí: un esquema Po
 Entidades mínimas para cumplir el objetivo sin sobre-diseñar:
 
 - **User** — `id`, correo institucional, nombre, rol (`STUDENT` \| `STAFF` \| `ADMIN`), hash de contraseña (Argon2id).
-- **Space** — escenario (cancha, pista, coliseo, etc.), campus, capacidad, reglas de uso, activo/inactivo.
+- **Space** — escenario (cancha, pista, coliseo, etc.), campus, capacidad, reglas de uso, foto opcional (`imageUrl`), activo/inactivo.
 - **TimeSlot / AvailabilityRule** — horarios habilitados y bloqueos (mantenimiento, eventos institucionales).
 - **Reservation** — espacio, solicitante, intervalo `[start, end)`, estado (`PENDING` \| `APPROVED` \| `REJECTED` \| `CANCELLED`), motivo, timestamps.
 - **AuditLog** — quién cambió qué reserva y cuándo (trazabilidad para administración).

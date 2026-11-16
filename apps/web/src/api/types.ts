@@ -35,6 +35,7 @@ export type Space = {
   campus: string;
   capacity: number;
   usageRules: string;
+  imageUrl?: string | null;
   isActive: boolean;
 };
 

@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { ErrorState, LoadingState } from '../components/FeedbackState';
 import { useApiResource } from '../hooks/useApiResource';
 import type { Space } from '../api/types';
+import { spaceImageSrc } from '../spaces/image';
 
 function uniqueSorted(values: string[]): string[] {
   return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b, 'es'));
@@ -26,6 +27,14 @@ function spacesPath(campus: string, type: string): string {
   }
   const query = params.toString();
   return query ? `/spaces?${query}` : '/spaces';
+}
+
+function SpaceCardPhoto({ space }: { space: Space }) {
+  const src = spaceImageSrc(space);
+  if (!src) {
+    return <span className="space-card__photo space-card__photo--empty" aria-hidden="true" />;
+  }
+  return <img className="space-card__photo" src={src} alt={space.name} />;
 }
 
 export function SpacesPage() {
@@ -122,11 +131,14 @@ export function SpacesPage() {
           {spaces.data.map((space) => (
             <li key={space.id}>
               <Link to={`/spaces/${space.id}`} className="space-card">
-                <strong>{space.name}</strong>
-                <span className="muted">
-                  {space.type} · {space.campus}
+                <SpaceCardPhoto space={space} />
+                <span className="space-card__body">
+                  <strong>{space.name}</strong>
+                  <span className="muted">
+                    {space.type} · {space.campus}
+                  </span>
+                  <p>{shortDescription(space.usageRules)}</p>
                 </span>
-                <p>{shortDescription(space.usageRules)}</p>
               </Link>
             </li>
           ))}

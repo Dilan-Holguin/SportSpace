@@ -12,6 +12,7 @@ const demoSpaces = [
     campus: 'Ciudad Universitaria',
     capacity: 40,
     usageRules: 'Uso con reserva previa',
+    imageUrl: '/spaces/cancha-sintetica.jpg',
   },
   {
     name: 'Cancha de futbol 5',
@@ -19,6 +20,7 @@ const demoSpaces = [
     campus: 'Ciudad Universitaria',
     capacity: 20,
     usageRules: 'Cancha sintetica. Usar zapatos adecuados y respetar el horario reservado.',
+    imageUrl: '/spaces/cancha-sintetica.jpg',
   },
   {
     name: 'Coliseo Robledo',
@@ -26,6 +28,15 @@ const demoSpaces = [
     campus: 'Robledo',
     capacity: 200,
     usageRules: 'Uso exclusivo con reserva. No ingresar alimentos al area de juego.',
+    imageUrl: '/spaces/coliseo-robledo.jpg',
+  },
+  {
+    name: 'Gimnasio',
+    type: 'gimnasio',
+    campus: 'Ciudad Universitaria',
+    capacity: 25,
+    usageRules: 'Uso con ropa deportiva y reserva previa.',
+    imageUrl: '/spaces/gimnasio.jpg',
   },
 ];
 

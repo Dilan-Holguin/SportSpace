@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import type { Space } from '../api/types';
 import { ErrorState, LoadingState } from '../components/FeedbackState';
 import { useApiResource } from '../hooks/useApiResource';
+import { spaceImageSrc } from '../spaces/image';
 
 function detailErrorMessage(message: string, httpStatus?: number): string {
   if (httpStatus === 404 || message.toLowerCase().includes('not found')) {
@@ -57,12 +58,14 @@ export function SpaceDetailPage() {
   }
 
   const item = space.data;
+  const photo = spaceImageSrc(item);
 
   return (
     <article className="space-detail">
       <p>
         <Link to="/spaces">← Catálogo</Link>
       </p>
+      {photo ? <img className="space-detail__photo" src={photo} alt={item.name} /> : null}
       <h1>{item.name}</h1>
       <dl className="space-facts">
         <div>

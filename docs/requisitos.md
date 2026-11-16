@@ -5,7 +5,7 @@
 | Proyecto | SportSpace |
 | Asignatura | Proyecto Integrador I (2508700) — Grupo 6 |
 | Institución | Universidad de Antioquia |
-| Versión | 1.19 |
+| Versión | 1.20 |
 | Fecha | 2026-09-12 |
 | Estado | Baseline de fase 1 (análisis). Congela el MVP de PI1. |
 
@@ -196,7 +196,7 @@ Estimación en puntos (Fibonacci) orientativa para el equipo, no contractual con
 **Criterios de aceptación**
 
 1. Se listan solo espacios `activo = true`.
-2. Cada ítem muestra al menos: nombre, tipo, campus y una descripción corta.
+2. Cada ítem muestra al menos: nombre, tipo, campus, una descripción corta y la foto del escenario cuando existe.
 3. Si no hay espacios, se muestra estado vacío (no error técnico).
 4. Visitante no autenticado no ve el catálogo (debe iniciar sesión).
 
@@ -212,7 +212,7 @@ Estimación en puntos (Fibonacci) orientativa para el equipo, no contractual con
 
 **Criterios de aceptación**
 
-1. El detalle incluye nombre, tipo, campus, capacidad, reglas de uso y estado.
+1. El detalle incluye nombre, tipo, campus, capacidad, reglas de uso, estado y la foto del escenario cuando existe.
 2. Un id inexistente responde 404 con mensaje claro.
 
 #### HU-07 — Gestionar espacios (staff/admin)
@@ -228,7 +228,7 @@ Estimación en puntos (Fibonacci) orientativa para el equipo, no contractual con
 
 **Criterios de aceptación**
 
-1. Staff/admin crea un espacio con nombre, tipo, campus, capacidad y reglas.
+1. Staff/admin crea un espacio con nombre, tipo, campus, capacidad, reglas y foto opcional (`imageUrl`).
 2. Puede editar esos campos y desactivar el espacio (deja de aparecer en el catálogo estudiantil).
 3. `GET /api/spaces` con rol `STAFF` o `ADMIN` incluye espacios inactivos; `STUDENT` sigue viendo solo activos.
 4. Un espacio desactivado no admite nuevas reservas.
@@ -469,7 +469,7 @@ Escenarios Gherkin de las HU Must: [gherkin/](gherkin/).
 | RF-05 | El sistema debe permitir cerrar sesión e invalidar la sesión del cliente. | HU-03 | Must |
 | RF-06 | El sistema debe autorizar cada operación según el rol (`STUDENT`, `STAFF`, `ADMIN`). | HU-04 | Must |
 | RF-07 | El sistema debe listar espacios activos a usuarios autenticados (`STUDENT` no ve inactivos). | HU-05 | Must |
-| RF-08 | El sistema debe mostrar el detalle de un espacio (nombre, tipo, campus, capacidad, reglas). | HU-05, HU-06 | Must |
+| RF-08 | El sistema debe mostrar el detalle de un espacio (nombre, tipo, campus, capacidad, reglas y foto si existe). | HU-05, HU-06 | Must |
 | RF-09 | El sistema debe permitir a `STAFF` y `ADMIN` crear, editar y desactivar espacios, y listar también los inactivos en `GET /api/spaces`. | HU-07 | Must |
 | RF-10 | El sistema debe permitir filtrar espacios por campus y tipo. | HU-08 | Should |
 | RF-11 | El sistema debe calcular la disponibilidad de un espacio para una fecha a partir de reglas de horario, bloqueos y reservas `PENDING`/`APPROVED`. | HU-09 | Must |
@@ -606,3 +606,4 @@ En fase 5 se automatizan (p. ej. Jest/Playwright) usando estos escenarios como e
 | 1.17 | 2026-10-22 | Docker Compose levanta Postgres, API y front; la API aplica migraciones y seed al arrancar (`feat/docker-stack`). |
 | 1.18 | 2026-11-10 | HU-10: consulta/guardado del horario por día y consulta/creación/eliminación de bloqueos; se actualizan contratos API, pruebas y Postman. |
 | 1.19 | 2026-11-16 | Front `feat/web-spaces-admin`: staff/admin crea, edita y desactiva espacios desde Administración → Espacios (HU-07). |
+| 1.20 | 2026-11-16 | Catálogo y detalle muestran foto del escenario; `Space.imageUrl` opcional en API/admin y fotos de Coliseo Robledo, cancha sintética y gimnasio (HU-05, HU-06, HU-07). |

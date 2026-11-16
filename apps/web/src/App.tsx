@@ -7,6 +7,7 @@ import { AdminInboxPage } from './pages/AdminInboxPage';
 import { AdminOccupancyPage } from './pages/AdminOccupancyPage';
 import { AdminPage } from './pages/AdminPage';
 import { AdminRolesPage } from './pages/AdminRolesPage';
+import { AdminSpacesPage } from './pages/AdminSpacesPage';
 import { AvailabilityPage } from './pages/AvailabilityPage';
 import { LoginPage } from './pages/LoginPage';
 import { MyReservationsPage } from './pages/MyReservationsPage';
@@ -34,6 +35,7 @@ export function App() {
               <Route path="/admin" element={<AdminPage />}>
                 <Route index element={<Navigate to="inbox" replace />} />
                 <Route path="inbox" element={<AdminInboxPage />} />
+                <Route path="spaces" element={<AdminSpacesPage />} />
                 <Route path="occupancy" element={<AdminOccupancyPage />} />
                 <Route path="availability" element={<AdminAvailabilityPage />} />
                 <Route path="roles" element={<AdminRolesPage />} />

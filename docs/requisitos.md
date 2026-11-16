@@ -5,7 +5,7 @@
 | Proyecto | SportSpace |
 | Asignatura | Proyecto Integrador I (2508700) — Grupo 6 |
 | Institución | Universidad de Antioquia |
-| Versión | 1.18 |
+| Versión | 1.19 |
 | Fecha | 2026-09-12 |
 | Estado | Baseline de fase 1 (análisis). Congela el MVP de PI1. |
 
@@ -605,3 +605,4 @@ En fase 5 se automatizan (p. ej. Jest/Playwright) usando estos escenarios como e
 | 1.17 | 2026-10-16 | API `feat/spaces-staff-list`: `GET /api/spaces` incluye inactivos para STAFF/ADMIN; el estudiante sigue viendo solo activos (HU-07). |
 | 1.17 | 2026-10-22 | Docker Compose levanta Postgres, API y front; la API aplica migraciones y seed al arrancar (`feat/docker-stack`). |
 | 1.18 | 2026-11-10 | HU-10: consulta/guardado del horario por día y consulta/creación/eliminación de bloqueos; se actualizan contratos API, pruebas y Postman. |
+| 1.19 | 2026-11-16 | Front `feat/web-spaces-admin`: staff/admin crea, edita y desactiva espacios desde Administración → Espacios (HU-07). |

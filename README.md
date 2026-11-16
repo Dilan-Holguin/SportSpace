@@ -108,9 +108,10 @@ Regla de conflicto (objetivo 4), no solo en código:
 
 ```sql
 -- Dos reservas APPROVED o PENDING no pueden solaparse en el mismo espacio.
+-- "span" (tstzrange) lo mantiene un trigger BEFORE INSERT/UPDATE.
 EXCLUDE USING gist (
-  space_id WITH =,
-  tsrange(starts_at, ends_at, '[)') WITH &&
+  "spaceId" WITH =,
+  "span" WITH &&
 ) WHERE (status IN ('PENDING', 'APPROVED'));
 ```
 

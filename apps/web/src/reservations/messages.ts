@@ -52,6 +52,8 @@ export function toReservationErrorMessage(error: unknown): string {
     if (error.status === 400) {
       return 'Revisa el horario seleccionado e inténtalo de nuevo.';
     }
+
+    return 'No se pudo completar la solicitud. Inténtalo de nuevo.';
   }
 
   return 'No hay conexión con el servidor. ¿Está corriendo la API?';

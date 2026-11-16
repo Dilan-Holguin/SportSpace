@@ -4,7 +4,7 @@ Pruebas de aceptación del MVP. Idioma: español (`# language: es`).
 
 Fuente de verdad de negocio: [../requisitos.md](../requisitos.md). El recorrido Must de UI se automatiza con Playwright (`npm run test:e2e`, specs en `apps/web/e2e/`, API en `localhost:3000`). Los escenarios siguen siendo checklist de sustentación.
 
-No se cubren el rate limit 429, el catálogo vacío ni toda la matriz de transiciones.
+El E2E no cubre el rate limit 429 ni el catálogo vacío. La matriz de transiciones HU-16 y los 403 de HU-04/HU-14 se cubren en Jest (`npm test -w @sportspace/api`).
 
 | Archivo | HU | Prioridad |
 | --- | --- | --- |

@@ -1,5 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { describe, expect, it, jest } from '@jest/globals';
+import { Role } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { SpacesService } from './spaces.service';
 
@@ -25,7 +26,7 @@ describe('SpacesService', () => {
     prisma.space.findMany.mockResolvedValue(spaces);
 
     await expect(
-      service.listActive({ campus: 'Principal', type: 'Cancha' }),
+      service.list({ campus: 'Principal', type: 'Cancha' }, Role.STUDENT),
     ).resolves.toBe(spaces);
 
     expect(prisma.space.findMany).toHaveBeenCalledWith({

@@ -139,7 +139,100 @@ describe('ReservationsService (Cobertura Ampliada)', () => {
       const result = await service.reject(staff, 'res-1', '  Motivo Válido  ');
       expect(result.status).toBe(ReservationStatus.REJECTED);
     });
+  });
 
-    
+  describe('HU-16 legal and illegal status transitions', () => {
+    const futureStart = new Date('2030-01-01T15:00:00.000Z');
+
+    function storedReservation(status: ReservationStatus, userId = student.sub) {
+      return {
+        id: 'res-1',
+        userId,
+        status,
+        startsAt: futureStart,
+        space: { id: 'space-1', name: 'Pista sintetica', type: 'pista', campus: 'Ciudad Universitaria' },
+      };
+    }
+
+    it('allows PENDING to APPROVED, REJECTED and CANCELLED', async () => {
+      const { service } = createService();
+      prismaMock.reservation.findUnique.mockResolvedValue(storedReservation(ReservationStatus.PENDING));
+      txMock.reservation.update
+        .mockResolvedValueOnce({ status: ReservationStatus.APPROVED })
+        .mockResolvedValueOnce({ status: ReservationStatus.REJECTED })
+        .mockResolvedValueOnce({ status: ReservationStatus.CANCELLED });
+
+      await expect(service.approve(staff, 'res-1')).resolves.toMatchObject({ status: ReservationStatus.APPROVED });
+      await expect(service.reject(staff, 'res-1', 'Cancha en mantenimiento')).resolves.toMatchObject({
+        status: ReservationStatus.REJECTED,
+      });
+      await expect(service.cancel(student, 'res-1')).resolves.toMatchObject({ status: ReservationStatus.CANCELLED });
+    });
+
+    it('allows APPROVED to CANCELLED', async () => {
+      const { service } = createService();
+      prismaMock.reservation.findUnique.mockResolvedValue(storedReservation(ReservationStatus.APPROVED));
+      txMock.reservation.update.mockResolvedValue({ status: ReservationStatus.CANCELLED });
+
+      await expect(service.cancel(student, 'res-1')).resolves.toMatchObject({ status: ReservationStatus.CANCELLED });
+    });
+
+    it.each([
+      [ReservationStatus.APPROVED, 'approve'],
+      [ReservationStatus.APPROVED, 'reject'],
+      [ReservationStatus.REJECTED, 'approve'],
+      [ReservationStatus.REJECTED, 'reject'],
+      [ReservationStatus.REJECTED, 'cancel'],
+      [ReservationStatus.CANCELLED, 'approve'],
+      [ReservationStatus.CANCELLED, 'reject'],
+      [ReservationStatus.CANCELLED, 'cancel'],
+    ])('returns 409 when moving from %s via %s', async (from: ReservationStatus, action: string) => {
+      const { service } = createService();
+      prismaMock.reservation.findUnique.mockResolvedValue(storedReservation(from));
+
+      const run =
+        action === 'approve'
+          ? service.approve(staff, 'res-1')
+          : action === 'reject'
+            ? service.reject(staff, 'res-1', 'Motivo de prueba')
+            : service.cancel(student, 'res-1');
+
+      await expect(run).rejects.toBeInstanceOf(ConflictException);
+    });
+
+    it('rejects cancelling a reservation that already started', async () => {
+      const { service } = createService();
+      prismaMock.reservation.findUnique.mockResolvedValue({
+        ...storedReservation(ReservationStatus.PENDING),
+        startsAt: new Date('2030-01-01T11:00:00.000Z'),
+      });
+
+      await expect(service.cancel(student, 'res-1')).rejects.toBeInstanceOf(BadRequestException);
+    });
+  });
+
+  describe('HU-04 and HU-14 authorization (403)', () => {
+    it('forbids a student from approving or rejecting a reservation', async () => {
+      const { service } = createService();
+
+      await expect(service.approve(student, 'res-1')).rejects.toBeInstanceOf(ForbiddenException);
+      await expect(service.reject(student, 'res-1', 'No corresponde')).rejects.toBeInstanceOf(
+        ForbiddenException,
+      );
+      expect(prismaMock.reservation.findUnique).not.toHaveBeenCalled();
+    });
+
+    it('forbids cancelling another user reservation', async () => {
+      const { service } = createService();
+      prismaMock.reservation.findUnique.mockResolvedValue({
+        id: 'res-1',
+        userId: 'other-student',
+        status: ReservationStatus.PENDING,
+        startsAt: new Date('2030-01-01T15:00:00.000Z'),
+      });
+
+      await expect(service.cancel(student, 'res-1')).rejects.toBeInstanceOf(ForbiddenException);
+      expect(txMock.reservation.update).not.toHaveBeenCalled();
+    });
   });
 });

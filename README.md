@@ -263,7 +263,7 @@ HU-07 en UI ya está en `main`.
 | --- | --- | --- |
 | Recorrido visual escritorio ≥ 1024 px (RNF-09) | **Mateo** | No bloquea HU |
 | Revisión de secretos y endurecimiento para despliegue | **Carlos** | Helmet y CORS ya están; validar configuración sin valores de desarrollo |
-| Completar pruebas de transiciones y autorización 403 (HU-16, HU-04) | **Dilan** + **Carlos** | Ya hay cobertura unitaria parcial; faltan casos de transición y guardas |
+| Completar pruebas de transiciones y autorización 403 (HU-16, HU-04) | **Dilan** + **Carlos** | En `feat/transition-403-tests`: 409 de máquina de estados y 403 de `RolesGuard` / cancelar reserva ajena |
 | HU-17 / HU-18 | Nadie | Could; fuera de PI1 |
 
 #### Orden de merge
@@ -271,10 +271,10 @@ HU-07 en UI ya está en `main`.
 ```
 main
  ├─ Carlos: feat/ci
- └─ Mateo:  feat/e2e-gherkin
+ └─ Dilan + Carlos: feat/transition-403-tests
 ```
 
-Para sustentación, el camino crítico de front ya está en `main`. CI puede ir en paralelo. E2E Playwright está en `feat/e2e-gherkin`.
+Para sustentación, el camino crítico de front y el E2E ya están en `main`. CI y los tests de transiciones/403 pueden ir en paralelo.
 
 ### Fase 6 — Informe y sustentación (semana 16)
 

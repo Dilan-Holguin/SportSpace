@@ -31,7 +31,7 @@ Desarrollar una plataforma centralizada para la consulta en tiempo real de la di
 
 Asignatura: Proyecto Integrador I (2508700) — Grupo 6 — Ingeniería de Sistemas, Universidad de Antioquia.
 
-Documentación de requisitos: [docs/requisitos.md](docs/requisitos.md) (alcance, MVP, HU, RF y RNF). Escenarios de prueba: [docs/gherkin/](docs/gherkin/). Reparto del equipo y ramas: [docs/plan-equipo.md](docs/plan-equipo.md). Colección Postman: [docs/postman/](docs/postman/). Auth vive en `apps/api` ([docs/auth-integracion.md](docs/auth-integracion.md)). El front inicia sesión con JWT, muestra el catálogo, el calendario y permite solicitar o cancelar reservas. Staff/admin aprueba o rechaza en la bandeja, gestiona el catálogo (`POST`/`PATCH /api/spaces`) y ve ocupación semanal. Un `ADMIN` promociona usuarios (`PATCH /api/users/:id`). Catálogo: `GET /api/spaces` (estudiante: solo activos; STAFF/ADMIN: también inactivos). Disponibilidad: `GET /api/spaces/:id/availability?date=YYYY-MM-DD`. Reservas: `POST /api/reservations`. Dashboard: `GET /api/occupancy?weekStart=YYYY-MM-DD` (STAFF/ADMIN).
+Documentación de requisitos: [docs/requisitos.md](docs/requisitos.md) (alcance, MVP, HU, RF y RNF). Escenarios de prueba: [docs/gherkin/](docs/gherkin/). Artículo IEEE: [docs/ieee/sportspace-articulo.md](docs/ieee/sportspace-articulo.md). Reparto del equipo y ramas: [docs/plan-equipo.md](docs/plan-equipo.md). Colección Postman: [docs/postman/](docs/postman/). Auth vive en `apps/api` ([docs/auth-integracion.md](docs/auth-integracion.md)). El front inicia sesión con JWT, muestra el catálogo, el calendario y permite solicitar o cancelar reservas. Staff/admin aprueba o rechaza en la bandeja, gestiona el catálogo (`POST`/`PATCH /api/spaces`) y ve ocupación semanal. Un `ADMIN` promociona usuarios (`PATCH /api/users/:id`). Catálogo: `GET /api/spaces` (estudiante: solo activos; STAFF/ADMIN: también inactivos). Disponibilidad: `GET /api/spaces/:id/availability?date=YYYY-MM-DD`. Reservas: `POST /api/reservations`. Dashboard: `GET /api/occupancy?weekStart=YYYY-MM-DD` (STAFF/ADMIN).
 
 ---
 
@@ -278,7 +278,7 @@ Para sustentación, el camino crítico de front y el E2E ya están en `main`. CI
 
 ### Fase 6 — Informe y sustentación (semana 16)
 
-- Artículo en formato IEEE: problema, arquitectura (y por qué no microservicios en PI1), implementación, pruebas, conclusiones.
+- Artículo en formato IEEE: problema, arquitectura (y por qué no microservicios en PI1), implementación, pruebas, conclusiones. Word de entrega: [docs/ieee/SportSpace-PI1-IEEE.docx](docs/ieee/SportSpace-PI1-IEEE.docx). Borrador en Markdown: [docs/ieee/sportspace-articulo.md](docs/ieee/sportspace-articulo.md).
 - Presentación oral y demostración en vivo del flujo de reserva + rechazo de conflicto.
 
 ---
@@ -321,6 +321,7 @@ SportSpace/
 │   ├── requisitos.md           # HU, RF, RNF, alcance, MVP
 │   ├── plan-equipo.md          # ramas y reparto Dilan / Carlos / Mateo
 │   ├── gherkin/                # escenarios de aceptación
+│   ├── ieee/                   # artículo de sustentación (plantilla IEEE)
 │   └── postman/                # colección Postman de la API
 ├── docker-compose.yml          # Postgres + API + front
 ├── .env.example

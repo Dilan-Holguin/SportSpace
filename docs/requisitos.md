@@ -5,7 +5,7 @@
 | Proyecto | SportSpace |
 | Asignatura | Proyecto Integrador I (2508700) — Grupo 6 |
 | Institución | Universidad de Antioquia |
-| Versión | 1.24 |
+| Versión | 1.25 |
 | Fecha | 2026-09-12 |
 | Estado | Baseline de fase 1 (análisis). Congela el MVP de PI1. |
 
@@ -611,3 +611,4 @@ El recorrido Must de UI se ejecuta con Playwright (`npm run test:e2e`). Los `.fe
 | 1.22 | 2026-11-16 | Prueba de integración `feat/race-test` (HU-12 / RNF-05): dos `POST /api/reservations` simultáneos contra PostgreSQL; a lo sumo una `PENDING` y la otra 409. |
 | 1.23 | 2026-11-16 | E2E Playwright `feat/e2e-gherkin`: auth, catálogo, reserva/conflicto/bandeja, ocupación, roles, HU-07 y HU-10 (`npm run test:e2e`). |
 | 1.24 | 2026-11-16 | Jest HU-16 (409 en transiciones ilegales) y HU-04/HU-14 (403 de estudiante y cancelar reserva ajena) en `feat/transition-403-tests`. |
+| 1.25 | 2026-11-16 | Artículo IEEE de sustentación (problema, monolito vs microservicios, implementación, pruebas, conclusiones) en `docs/ieee/`. |

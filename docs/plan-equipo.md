@@ -148,7 +148,7 @@ Restante (detalle en el [README](../README.md#plan-de-trabajo-restante-fase-5)):
 | Prioridad | Bloque | Dilan | Carlos | Mateo |
 | --- | --- | --- | --- | --- |
 | P0 | Must de producto | API para listar inactivos integrada en `main` | — | `feat/web-spaces-admin` (HU-07 UI) |
-| P1 | Evidencia | `feat/race-test` (HU-12 / RNF-05) | `feat/ci` (pruebas, build, tipos y Sonar) | `feat/e2e-gherkin` (después de P0) |
+| P1 | Evidencia | `feat/race-test` (HU-12 / RNF-05, `npm run test:int`) | `feat/ci` (pruebas, build, tipos y Sonar) | `feat/e2e-gherkin` (después de P0) |
 | P2 | Pulido | Completar tests de transiciones | Secretos de despliegue; completar tests 403 | Recorrido visual ≥ 1024 px |
 
 HU-08 ya está. HU-17 y HU-18 no se implementan en PI1.

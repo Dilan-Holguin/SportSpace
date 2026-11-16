@@ -5,7 +5,7 @@
 | Proyecto | SportSpace |
 | Asignatura | Proyecto Integrador I (2508700) — Grupo 6 |
 | Institución | Universidad de Antioquia |
-| Versión | 1.21 |
+| Versión | 1.22 |
 | Fecha | 2026-09-12 |
 | Estado | Baseline de fase 1 (análisis). Congela el MVP de PI1. |
 
@@ -608,3 +608,4 @@ En fase 5 se automatizan (p. ej. Jest/Playwright) usando estos escenarios como e
 | 1.19 | 2026-11-16 | Front `feat/web-spaces-admin`: staff/admin crea, edita y desactiva espacios desde Administración → Espacios (HU-07). |
 | 1.20 | 2026-11-16 | Catálogo y detalle muestran foto del escenario; `Space.imageUrl` opcional en API/admin y fotos de Coliseo Robledo, cancha sintética y gimnasio (HU-05, HU-06, HU-07). |
 | 1.21 | 2026-11-16 | Reparación de `Reservation.span` + `EXCLUDE` (HU-11): bases que marcaron la migración de solape como aplicada sin la columna ya pueden crear reservas; el front ya no muestra “sin conexión” ante un 500. |
+| 1.22 | 2026-11-16 | Prueba de integración `feat/race-test` (HU-12 / RNF-05): dos `POST /api/reservations` simultáneos contra PostgreSQL; a lo sumo una `PENDING` y la otra 409. |

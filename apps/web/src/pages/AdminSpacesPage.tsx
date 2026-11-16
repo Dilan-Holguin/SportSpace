@@ -29,14 +29,15 @@ function draftFromSpace(space: Space): SpaceDraft {
   };
 }
 
-function payloadFromDraft(draft: SpaceDraft) {
+function payloadFromDraft(draft: SpaceDraft, mode: 'create' | 'update' = 'update') {
+  const imageUrl = draft.imageUrl.trim();
   return {
     name: draft.name.trim(),
     type: draft.type.trim(),
     campus: draft.campus.trim(),
     capacity: Number(draft.capacity),
     usageRules: draft.usageRules.trim(),
-    imageUrl: draft.imageUrl.trim() || null,
+    ...(imageUrl ? { imageUrl } : mode === 'update' ? { imageUrl: null } : {}),
   };
 }
 
@@ -68,7 +69,7 @@ export function AdminSpacesPage() {
     setSuccess('');
     setCreating(true);
     try {
-      const created = await apiPost<Space>('/spaces', payloadFromDraft(createDraft));
+      const created = await apiPost<Space>('/spaces', payloadFromDraft(createDraft, 'create'));
       setCreateDraft(emptyDraft());
       refreshList();
       setSuccess(`${created.name} quedó activo en el catálogo.`);

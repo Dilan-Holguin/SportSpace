@@ -235,27 +235,27 @@ Reparto vigente (swap): **Dilan** = espacios / disponibilidad / reservas; **Carl
 
 El núcleo funcional, el ciclo de reservas, ocupación, roles y filtros HU-08 ya están en `main`. Se añadieron pruebas unitarias Jest para servicios de API y sesión del front, junto con configuración de cobertura para Sonar; los commits recientes reportan 82 % de cobertura. Helmet, CORS y límites de solicitudes en login y creación de reservas ya están implementados.
 
-El API y la pantalla de horarios/bloqueos (HU-10) ya están en `main`. Pendientes principales: automatizar CI y completar E2E sobre Gherkin. HU-17 y HU-18 siguen **fuera de PI1**.
+El API y la pantalla de horarios/bloqueos (HU-10) ya están en `main`. Pendiente principal: automatizar CI. HU-17 y HU-18 siguen **fuera de PI1**.
 
 Reparto: **Dilan** API (no React) · **Carlos** auth / CI / Docker · **Mateo** front / E2E (no Nest).
 
 #### P0 — Cerrar Must de producto (antes de la demo)
 
-Sin la pantalla de catálogo, HU-07 no se recorre en la app (sí en Postman).
+HU-07 en UI ya está en `main`.
 
 | Orden | Rama | Qué | Quién | Depende de |
 | --- | --- | --- | --- | --- |
 | 1 | `feat/spaces-staff-list` | **Integrado en `main`.** STAFF/ADMIN listan también espacios inactivos; los estudiantes siguen viendo solo activos. | **Dilan** | Hecho |
-| 2 | `feat/web-spaces-admin` | Pantalla staff: crear, editar y desactivar espacios. 403 ya existe. | **Mateo** | (1) en `main` |
+| 2 | `feat/web-spaces-admin` | **Integrado en `main`.** Pantalla staff: crear, editar y desactivar espacios. | **Mateo** | Hecho |
 | 3 | `feat/web-hours-blocks` | **Integrado en `main`.** Administración → Horarios (horario semanal y bloqueos). | **Mateo** | Hecho |
 
 #### P1 — Evidencia (criterio de salida del MVP)
 
 | Orden | Rama | Qué | Quién | Depende de |
 | --- | --- | --- | --- | --- |
-| 4 | `feat/race-test` | Prueba de integración (`npm run test:int`): dos `POST /reservations` simultáneos contra PostgreSQL; una queda `PENDING` y la otra 409. También cubre el conflicto secuencial. | **Dilan** | En `feat/race-test` |
-| 5 | `feat/ci` | Crear workflow para ejecutar pruebas, build y comprobaciones de tipos en cada PR; incorporar lint y análisis Sonar/cobertura. La configuración de Sonar y las unitarias ya están, pero no encontré workflow de CI en el repo. | **Carlos** | En paralelo a P0 |
-| 6 | `feat/e2e-gherkin` | Playwright contra `docs/gherkin/`: registro/login, catálogo, solicitar, conflicto, bandeja, ocupación, roles, y al final HU-07/HU-10. | **Mateo** | P0 mergeado |
+| 4 | `feat/race-test` | **Integrado en `main`.** `npm run test:int`: dos `POST /reservations` simultáneos; una `PENDING` y la otra 409. | **Dilan** | Hecho |
+| 5 | `feat/ci` | Crear workflow para ejecutar pruebas, build y comprobaciones de tipos en cada PR; incorporar lint y análisis Sonar/cobertura. La configuración de Sonar y las unitarias ya están, pero no encontré workflow de CI en el repo. | **Carlos** | En paralelo |
+| 6 | `feat/e2e-gherkin` | Playwright (`npm run test:e2e`) sobre los Gherkin: auth, catálogo, reservar, conflicto, bandeja, ocupación, roles, HU-07 y HU-10. Requiere API en `:3000`. | **Mateo** | En `feat/e2e-gherkin` |
 
 #### P2 — Pulido (si alcanza el tiempo)
 
@@ -270,12 +270,11 @@ Sin la pantalla de catálogo, HU-07 no se recorre en la app (sí en Postman).
 
 ```
 main
- ├─ Dilan:  feat/race-test
  ├─ Carlos: feat/ci
  └─ Mateo:  feat/e2e-gherkin
 ```
 
-Para sustentación, el camino crítico de front es **HU-07 en UI**. CI y la prueba de carrera pueden ir al mismo tiempo. E2E al final, cuando exista la pantalla de catálogo staff.
+Para sustentación, el camino crítico de front ya está en `main`. CI puede ir en paralelo. E2E Playwright está en `feat/e2e-gherkin`.
 
 ### Fase 6 — Informe y sustentación (semana 16)
 
@@ -369,6 +368,17 @@ npm run dev:web
 ```
 
 No mezcles este modo con `docker compose up` completo: ambos usan los puertos 3000 y 5173.
+
+### Pruebas E2E (Playwright)
+
+Cubren el recorrido Must de UI descrito en `docs/gherkin/` (auth, catálogo, reserva, conflicto, bandeja, ocupación, roles, HU-07 y HU-10). La API debe estar en `http://localhost:3000`. Playwright reutiliza Vite en `:5173` si ya está corriendo.
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
+
+Los specs viven en `apps/web/e2e/` y corren en serie (`workers: 1`) para no chocar con el rate limit de login ni con las franjas.
 
 ---
 

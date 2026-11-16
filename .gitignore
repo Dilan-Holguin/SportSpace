@@ -36,3 +36,5 @@ playwright/.cache/
 # Documentos locales (no van al remoto)
 *.docx
 *.doc
+!docs/ieee/*.docx
+docs/ieee/~$*

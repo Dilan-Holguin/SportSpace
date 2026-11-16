@@ -244,9 +244,10 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Pista sintetica\",\n  \"type\": \"pista\",\n  \"campus\": \"Ciudad Universitaria\",\n  \"capacity\": 40,\n  \"usageRules\": \"Uso con reserva previa\"\n}"
+              "raw": "{\n  \"name\": \"Pista sintetica\",\n  \"type\": \"pista\",\n  \"campus\": \"Ciudad Universitaria\",\n  \"capacity\": 40,\n  \"usageRules\": \"Uso con reserva previa\",\n  \"imageUrl\": \"/spaces/cancha-sintetica.jpg\"\n}"
             },
-            "url": "{{baseUrl}}/api/spaces"
+            "url": "{{baseUrl}}/api/spaces",
+            "description": "STAFF o ADMIN. imageUrl es opcional: URL http(s) o ruta /spaces/archivo.jpg servida por el front."
           }
         },
         {
@@ -275,9 +276,10 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"capacity\": 50,\n  \"usageRules\": \"Reserva con 24 horas de anticipacion\"\n}"
+              "raw": "{\n  \"capacity\": 50,\n  \"usageRules\": \"Reserva con 24 horas de anticipacion\",\n  \"imageUrl\": \"/spaces/cancha-sintetica.jpg\"\n}"
             },
-            "url": "{{baseUrl}}/api/spaces/{{spaceId}}"
+            "url": "{{baseUrl}}/api/spaces/{{spaceId}}",
+            "description": "STAFF o ADMIN. imageUrl opcional; string vacío o null quita la foto."
           }
         },
         {

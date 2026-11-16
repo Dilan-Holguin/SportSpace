@@ -91,7 +91,8 @@ describe('SpacesService', () => {
     const dto = {
       name: '  Cancha Sintética  ',
       type: 'Fútbol',
-      isActive: false
+      isActive: false,
+      imageUrl: '/spaces/cancha-sintetica.jpg',
     };
 
     await service.update('space-1', dto);
@@ -102,7 +103,8 @@ describe('SpacesService', () => {
       data: {
         name: 'Cancha Sintética',
         type: 'Fútbol',
-        isActive: false
+        isActive: false,
+        imageUrl: '/spaces/cancha-sintetica.jpg',
       }
     });
   });

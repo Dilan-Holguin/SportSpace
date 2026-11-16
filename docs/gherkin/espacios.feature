@@ -14,6 +14,7 @@ Característica: Catálogo de espacios deportivos
     Dado que "ana.estudiante@udea.edu.co" inició sesión con rol "STUDENT"
     Cuando consulta el catálogo de espacios
     Entonces ve "Pista sintética de atletismo"
+    Y ve la foto del escenario
     Y no ve "Cancha auxiliar"
 
   @HU-05 @RF-07
@@ -34,7 +35,7 @@ Característica: Catálogo de espacios deportivos
   Escenario: Ver detalle de un espacio
     Dado que "ana.estudiante@udea.edu.co" inició sesión con rol "STUDENT"
     Cuando abre el detalle de "Pista sintética de atletismo"
-    Entonces ve nombre, tipo, campus, capacidad y reglas de uso
+    Entonces ve nombre, tipo, campus, capacidad, reglas de uso y la foto del escenario
 
   @HU-06 @RF-08
   Escenario: Detalle de espacio inexistente

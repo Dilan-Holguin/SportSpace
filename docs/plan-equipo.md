@@ -141,13 +141,13 @@ Si dos PRs tocan el mismo archivo, el segundo espera a que el primero esté en `
 
 ## 7. Ritmo (hecho vs. restante)
 
-Hecho en `main`: scaffold, auth, CRUD API de espacios, disponibilidad, reservas, ocupación, roles, catálogo/detalle/filtros, calendario, mis reservas, bandeja, dashboard y gestión de roles.
+Hecho en `main`: scaffold, auth, CRUD API de espacios, disponibilidad, reservas, ocupación, roles, catálogo/detalle/filtros, calendario, mis reservas, bandeja, dashboard, gestión de roles y pantalla de horarios/bloqueos.
 
 Restante (detalle en el [README](../README.md#plan-de-trabajo-restante-fase-5)):
 
 | Prioridad | Bloque | Dilan | Carlos | Mateo |
 | --- | --- | --- | --- | --- |
-| P0 | Must de producto | API para listar inactivos integrada en `main` | — | `feat/web-spaces-admin` → `feat/web-hours-blocks` |
+| P0 | Must de producto | API para listar inactivos integrada en `main` | — | `feat/web-spaces-admin` (HU-07 UI) |
 | P1 | Evidencia | `feat/race-test` (HU-12 / RNF-05) | `feat/ci` (pruebas, build, tipos y Sonar) | `feat/e2e-gherkin` (después de P0) |
 | P2 | Pulido | Completar tests de transiciones | Secretos de despliegue; completar tests 403 | Recorrido visual ≥ 1024 px |
 

@@ -31,7 +31,7 @@ Desarrollar una plataforma centralizada para la consulta en tiempo real de la di
 
 Asignatura: Proyecto Integrador I (2508700) — Grupo 6 — Ingeniería de Sistemas, Universidad de Antioquia.
 
-Documentación de requisitos: [docs/requisitos.md](docs/requisitos.md) (alcance, MVP, HU, RF y RNF). Escenarios de prueba: [docs/gherkin/](docs/gherkin/). Reparto del equipo y ramas: [docs/plan-equipo.md](docs/plan-equipo.md). Colección Postman: [docs/postman/](docs/postman/). Auth vive en `apps/api` ([docs/auth-integracion.md](docs/auth-integracion.md)). El front inicia sesión con JWT, muestra el catálogo, el calendario y permite solicitar o cancelar reservas. Staff/admin aprueba o rechaza en la bandeja y ve ocupación semanal. Un `ADMIN` promociona usuarios (`PATCH /api/users/:id`). Catálogo: `GET /api/spaces` (estudiante: solo activos; STAFF/ADMIN: también inactivos). Disponibilidad: `GET /api/spaces/:id/availability?date=YYYY-MM-DD`. Reservas: `POST /api/reservations`. Dashboard: `GET /api/occupancy?weekStart=YYYY-MM-DD` (STAFF/ADMIN).
+Documentación de requisitos: [docs/requisitos.md](docs/requisitos.md) (alcance, MVP, HU, RF y RNF). Escenarios de prueba: [docs/gherkin/](docs/gherkin/). Reparto del equipo y ramas: [docs/plan-equipo.md](docs/plan-equipo.md). Colección Postman: [docs/postman/](docs/postman/). Auth vive en `apps/api` ([docs/auth-integracion.md](docs/auth-integracion.md)). El front inicia sesión con JWT, muestra el catálogo, el calendario y permite solicitar o cancelar reservas. Staff/admin aprueba o rechaza en la bandeja, gestiona el catálogo (`POST`/`PATCH /api/spaces`) y ve ocupación semanal. Un `ADMIN` promociona usuarios (`PATCH /api/users/:id`). Catálogo: `GET /api/spaces` (estudiante: solo activos; STAFF/ADMIN: también inactivos). Disponibilidad: `GET /api/spaces/:id/availability?date=YYYY-MM-DD`. Reservas: `POST /api/reservations`. Dashboard: `GET /api/occupancy?weekStart=YYYY-MM-DD` (STAFF/ADMIN).
 
 ---
 
@@ -234,19 +234,19 @@ Reparto vigente (swap): **Dilan** = espacios / disponibilidad / reservas; **Carl
 
 El núcleo funcional, el ciclo de reservas, ocupación, roles y filtros HU-08 ya están en `main`. Se añadieron pruebas unitarias Jest para servicios de API y sesión del front, junto con configuración de cobertura para Sonar; los commits recientes reportan 82 % de cobertura. Helmet, CORS y límites de solicitudes en login y creación de reservas ya están implementados.
 
-El API de horarios y bloqueos ya permite consultar/guardar el horario por día, listar bloqueos por rango y eliminarlos. Pendientes principales: cerrar las pantallas staff de espacios y horarios/bloqueos; automatizar CI, probar concurrencia contra PostgreSQL y completar E2E sobre Gherkin. HU-17 y HU-18 siguen **fuera de PI1**.
+El API y la pantalla de horarios/bloqueos (HU-10) ya están en `main`. Pendientes principales: automatizar CI, probar concurrencia contra PostgreSQL y completar E2E sobre Gherkin. HU-17 y HU-18 siguen **fuera de PI1**.
 
 Reparto: **Dilan** API (no React) · **Carlos** auth / CI / Docker · **Mateo** front / E2E (no Nest).
 
 #### P0 — Cerrar Must de producto (antes de la demo)
 
-Sin esto, HU-07 y HU-10 no se recorren en la app (sí en Postman).
+Sin la pantalla de catálogo, HU-07 no se recorre en la app (sí en Postman).
 
 | Orden | Rama | Qué | Quién | Depende de |
 | --- | --- | --- | --- | --- |
 | 1 | `feat/spaces-staff-list` | **Integrado en `main`.** STAFF/ADMIN listan también espacios inactivos; los estudiantes siguen viendo solo activos. | **Dilan** | Hecho |
 | 2 | `feat/web-spaces-admin` | Pantalla staff: crear, editar y desactivar espacios. 403 ya existe. | **Mateo** | (1) en `main` |
-| 3 | `feat/web-hours-blocks` | Pantalla staff: consultar/configurar horarios por día y consultar/crear/eliminar bloqueos. El API ya está disponible. | **Mateo** | (2) o en paralelo si no se pisan archivos |
+| 3 | `feat/web-hours-blocks` | **Integrado en `main`.** Administración → Horarios (horario semanal y bloqueos). | **Mateo** | Hecho |
 
 #### P1 — Evidencia (criterio de salida del MVP)
 
@@ -271,10 +271,10 @@ Sin esto, HU-07 y HU-10 no se recorren en la app (sí en Postman).
 main
  ├─ Dilan:  feat/race-test (API de espacios inactivos ya integrada)
  ├─ Carlos: feat/ci
- └─ Mateo:  feat/web-spaces-admin → feat/web-hours-blocks → feat/e2e-gherkin
+ └─ Mateo:  feat/web-spaces-admin → feat/e2e-gherkin
 ```
 
-Para sustentación, el camino crítico es **1 → 2 → 3**. CI y la prueba de carrera pueden ir al mismo tiempo. E2E al final, cuando las dos pantallas staff existan.
+Para sustentación, el camino crítico de front es **HU-07 en UI**. CI y la prueba de carrera pueden ir al mismo tiempo. E2E al final, cuando exista la pantalla de catálogo staff.
 
 ### Fase 6 — Informe y sustentación (semana 16)
 

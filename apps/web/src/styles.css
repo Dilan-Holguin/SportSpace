@@ -734,3 +734,49 @@ a {
 .block-list .reservation-card__actions {
   min-width: 8rem;
 }
+
+.space-admin-form {
+  display: grid;
+  gap: 0.85rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgb(20 34 27 / 8%);
+}
+
+.space-admin-form h3 {
+  margin: 0;
+}
+
+.space-admin-form--inline {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+.space-admin-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: 0.75rem;
+}
+
+.space-admin-fields label {
+  display: grid;
+  gap: 0.3rem;
+  font-weight: 600;
+}
+
+.space-admin-fields input,
+.space-admin-fields textarea {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #c5d1ca;
+  border-radius: 8px;
+  font: inherit;
+  background: #fff;
+}
+
+.space-admin-fields__rules {
+  grid-column: 1 / -1;
+}

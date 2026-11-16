@@ -2,7 +2,9 @@
 
 Pruebas de aceptación del MVP. Idioma: español (`# language: es`).
 
-Fuente de verdad de negocio: [../requisitos.md](../requisitos.md). En fase 5 se automatizan; hasta entonces sirven como checklist de QA y de sustentación.
+Fuente de verdad de negocio: [../requisitos.md](../requisitos.md). El recorrido Must de UI se automatiza con Playwright (`npm run test:e2e`, specs en `apps/web/e2e/`, API en `localhost:3000`). Los escenarios siguen siendo checklist de sustentación.
+
+No se cubren el rate limit 429, el catálogo vacío ni toda la matriz de transiciones.
 
 | Archivo | HU | Prioridad |
 | --- | --- | --- |

@@ -235,7 +235,7 @@ Reparto vigente (swap): **Dilan** = espacios / disponibilidad / reservas; **Carl
 
 El núcleo funcional, el ciclo de reservas, ocupación, roles y filtros HU-08 ya están en `main`. Se añadieron pruebas unitarias Jest para servicios de API y sesión del front, junto con configuración de cobertura para Sonar; los commits recientes reportan 82 % de cobertura. Helmet, CORS y límites de solicitudes en login y creación de reservas ya están implementados.
 
-El API y la pantalla de horarios/bloqueos (HU-10) ya están en `main`. Pendientes principales: automatizar CI, probar concurrencia contra PostgreSQL y completar E2E sobre Gherkin. HU-17 y HU-18 siguen **fuera de PI1**.
+El API y la pantalla de horarios/bloqueos (HU-10) ya están en `main`. Pendientes principales: automatizar CI y completar E2E sobre Gherkin. HU-17 y HU-18 siguen **fuera de PI1**.
 
 Reparto: **Dilan** API (no React) · **Carlos** auth / CI / Docker · **Mateo** front / E2E (no Nest).
 
@@ -253,7 +253,7 @@ Sin la pantalla de catálogo, HU-07 no se recorre en la app (sí en Postman).
 
 | Orden | Rama | Qué | Quién | Depende de |
 | --- | --- | --- | --- | --- |
-| 4 | `feat/race-test` | Prueba de integración con dos `POST /reservations` simultáneos contra PostgreSQL: como máximo una `PENDING` y la otra responde 409. Las unitarias actuales no verifican la carrera ni la restricción real de BD. | **Dilan** | En paralelo a P0 |
+| 4 | `feat/race-test` | Prueba de integración (`npm run test:int`): dos `POST /reservations` simultáneos contra PostgreSQL; una queda `PENDING` y la otra 409. También cubre el conflicto secuencial. | **Dilan** | En `feat/race-test` |
 | 5 | `feat/ci` | Crear workflow para ejecutar pruebas, build y comprobaciones de tipos en cada PR; incorporar lint y análisis Sonar/cobertura. La configuración de Sonar y las unitarias ya están, pero no encontré workflow de CI en el repo. | **Carlos** | En paralelo a P0 |
 | 6 | `feat/e2e-gherkin` | Playwright contra `docs/gherkin/`: registro/login, catálogo, solicitar, conflicto, bandeja, ocupación, roles, y al final HU-07/HU-10. | **Mateo** | P0 mergeado |
 
@@ -270,9 +270,9 @@ Sin la pantalla de catálogo, HU-07 no se recorre en la app (sí en Postman).
 
 ```
 main
- ├─ Dilan:  feat/race-test (API de espacios inactivos ya integrada)
+ ├─ Dilan:  feat/race-test
  ├─ Carlos: feat/ci
- └─ Mateo:  feat/web-spaces-admin → feat/e2e-gherkin
+ └─ Mateo:  feat/e2e-gherkin
 ```
 
 Para sustentación, el camino crítico de front es **HU-07 en UI**. CI y la prueba de carrera pueden ir al mismo tiempo. E2E al final, cuando exista la pantalla de catálogo staff.

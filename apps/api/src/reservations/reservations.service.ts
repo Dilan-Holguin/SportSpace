@@ -182,8 +182,13 @@ function parseInstant(value: string): Date {
 }
 
 function isOverlapConstraintError(error: unknown): boolean {
-  const message = error instanceof Error ? error.message : '';
-  if (message.includes('23P01') || message.includes('Reservation_no_overlap')) {
+  const message = error instanceof Error ? error.message : String(error);
+  const nested =
+    error && typeof error === 'object' && 'cause' in error && error.cause instanceof Error
+      ? error.cause.message
+      : '';
+  const blob = `${message}\n${nested}`;
+  if (blob.includes('23P01') || blob.includes('Reservation_no_overlap')) {
     return true;
   }
   return error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2010';

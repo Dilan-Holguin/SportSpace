@@ -56,11 +56,15 @@ jobs:
       - name: Build API and web
         run: npm run build
 
+      # SonarCloud still has default branch `master` (see "Could not find ref 'master'").
+      # GitHub `main` is then a short-lived branch; the free org cannot fetch its Quality Gate.
+      # Map push/dispatch of GitHub main onto that Sonar main branch so wait works.
+      # On PRs, publish the scan but do not wait: short/PR branches are not allowed to query QG.
       - name: SonarQube Cloud scan
         if: ${{ env.SONAR_TOKEN != '' }}
         uses: SonarSource/sonarqube-scan-action@v8.3.0
         with:
-          args: -Dsonar.qualitygate.wait=true
+          args: ${{ github.ref == 'refs/heads/main' && '-Dsonar.qualitygate.wait=true -Dsonar.branch.name=master' || '-Dsonar.qualitygate.wait=false' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 

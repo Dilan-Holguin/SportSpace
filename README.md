@@ -362,7 +362,9 @@ SportSpace no va a Vercel: el front es una SPA estática, pero la API es Nest + 
 5. Aplica el Blueprint. Debe estimar **$0 / month** (plan `free` en Postgres, API y front). Si muestra ~24 USD, cancela: `main` aún no tiene este cambio. El primer build tarda varios minutos.
 6. La URL de la demo es la del servicio `sportspace-web` (`https://sportspace-web.onrender.com` o la que Render asigne). Login: `admin@udea.edu.co` y la clave del paso 4. El API también queda público; el jurado entra por el **front**.
 
-El plan gratuito se duerme tras ~15 min sin tráfico: **abre la URL 10 minutos antes** de la sustentación. El Postgres free caduca a los 30 días y solo puede haber uno por workspace.
+El plan gratuito se duerme tras ~15 min sin tráfico: **abre la URL 10 minutos antes** de la sustentación (front y API se despiertan por separado). El Postgres free caduca a los 30 días y solo puede haber uno por workspace.
+
+Si el Blueprint ya existía y el web falló con `host not found in upstream "sportspace-api"`, haz merge de este cambio y pulsa **Manual sync** en el Blueprint.
 
 ### VPS (alternativa)
 

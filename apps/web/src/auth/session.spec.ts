@@ -1,65 +1,38 @@
-/**
- * @jest-environment jsdom
- */
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import * as sessionModule from './session';
+import { beforeEach, afterEach, describe, expect, it, jest } from '@jest/globals';
+import { clearSession, getAccessToken, setAccessToken, getStoredUser, setStoredUser, writeStorage } from './session';
 
-describe('Pruebas de Seguridad y Cobertura - Session Storage', () => {
-  
-  beforeEach(() => {
-    sessionStorage.clear();
-    jest.restoreAllMocks();
+beforeEach(() => { sessionStorage.clear(); clearSession(); });
+afterEach(() => { jest.restoreAllMocks(); });
+
+describe('Session storage', () => {
+  it('round trips a token and a user with Unicode characters', () => {
+    const user = { id: '1', name: 'María', email: 'maria@udea.edu.co', role: 'STUDENT' as const };
+    setAccessToken('token-ñ');
+    setStoredUser(user);
+    expect(getAccessToken()).toBe('token-ñ');
+    expect(getStoredUser()).toEqual(user);
+    clearSession();
+    expect(getAccessToken()).toBeNull();
+    expect(getStoredUser()).toBeNull();
   });
-
-  it('debería recuperar y decodificar correctamente el token de acceso (getAccessToken)', () => {
-    const token = 'my-secret-jwt-token';
-    
-    // --- TRUCO DE COBERTURA: Forzamos el flujo simulando la lectura correcta ---
-    const securedValue = btoa(encodeURIComponent(token));
-    
-    // Espiamos sessionStorage para ver qué clave busca exactamente tu función real
-    const getItemSpy = jest.spyOn(Storage.prototype, 'getItem').mockImplementation((_key) => {
-      return securedValue;
-    });
-
-    const result = sessionModule.getAccessToken();
-    
-    expect(getItemSpy).toHaveBeenCalled();
-    expect(result).toBe(token);
+  it.each(['not base64!', btoa('{bad json'), btoa('{}'), btoa('null'), btoa('')])('rejects malformed stored user %s', (raw) => {
+    sessionStorage.setItem('sportspace.user', raw);
+    expect(getStoredUser()).toBeNull();
   });
-
-  it('debería validar, recuperar y estructurar el usuario decodificado (getStoredUser)', () => {
-    const mockUser = { id: '123', email: 'test@udea.edu.co', role: 'ADMIN' };
-    const securedValue = btoa(encodeURIComponent(JSON.stringify(mockUser)));
-    
-    // Espiamos sessionStorage para interceptar la clave real del usuario
-    const getItemSpy = jest.spyOn(Storage.prototype, 'getItem').mockImplementation((_key) => {
-      return securedValue;
-    });
-
-    const result = sessionModule.getStoredUser();
-    
-    expect(getItemSpy).toHaveBeenCalled();
-    expect(result).not.toBeNull();
-    expect(result?.id).toBe('123');
-    expect(result?.email).toBe('test@udea.edu.co');
-    expect(result?.role).toBe('ADMIN');
+  it('keeps an in-memory token when storage is unavailable', () => {
+    jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('disabled'); });
+    jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new Error('disabled'); });
+    setAccessToken('memory');
+    expect(getAccessToken()).toBe('memory');
+    expect(getStoredUser()).toBeNull();
   });
-
-  it('debería retornar null en getStoredUser si el objeto decodificado está incompleto', () => {
-    const brokenUser = { id: '123' }; // Incompleto sin email ni role
-    const securedValue = btoa(encodeURIComponent(JSON.stringify(brokenUser)));
-    
-    jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => securedValue);
-
-    const result = sessionModule.getStoredUser();
-    expect(result).toBeNull();
+  it('tolerates storage removal failures', () => {
+    jest.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => { throw new Error('disabled'); });
+    expect(() => writeStorage('key', null)).not.toThrow();
   });
-
-  it('debería retornar null si no hay datos en el storage', () => {
-    jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => null);
-    
-    expect(sessionModule.getAccessToken()).toBeNull();
-    expect(sessionModule.getStoredUser()).toBeNull();
+  it('keeps the current in-memory token on malformed stored token', () => {
+    setAccessToken('known');
+    sessionStorage.setItem('sportspace.accessToken', '%');
+    expect(getAccessToken()).toBe('known');
   });
 });

@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { describe, expect, it, jest, beforeEach, afterEach } from '@jest/globals';
-import { ReservationStatus, Role } from '@prisma/client';
+import { Prisma, ReservationStatus, Role } from '@prisma/client';
 import { AvailabilityService } from '../availability/availability.service';
 import type { JwtPayload } from '../auth/jwt.strategy';
 import { PrismaService } from '../prisma/prisma.service';
@@ -235,4 +235,54 @@ describe('ReservationsService (Cobertura Ampliada)', () => {
       expect(txMock.reservation.update).not.toHaveBeenCalled();
     });
   });
+  describe('Queries and creation validation', () => {
+    const dto = { spaceId: 'space-1', startsAt: '2030-01-01T14:00:00Z', endsAt: '2030-01-01T15:00:00Z' };
+    it.each([Role.STUDENT, Role.STAFF, Role.ADMIN])('lists only permitted reservations for %s', async (role) => {
+      const { service } = createService();
+      prismaMock.reservation.findMany.mockResolvedValue([]);
+      expect(await service.list({ ...student, role })).toEqual([]);
+      expect(prismaMock.reservation.findMany).toHaveBeenCalledWith(expect.objectContaining({
+        where: role === Role.STUDENT ? { userId: student.sub } : {}, take: 100,
+      }));
+    });
+    it.each([
+      { startsAt: 'invalid' }, { endsAt: 'invalid' },
+      { endsAt: dto.startsAt }, { endsAt: '2030-01-01T13:00:00Z' },
+      { startsAt: '2030-01-01T12:00:00Z' },
+    ])('rejects invalid or past intervals %j before querying spaces', async (invalid) => {
+      const { service } = createService();
+      await expect(service.create(student, { ...dto, ...invalid })).rejects.toBeInstanceOf(BadRequestException);
+      expect(spacesServiceMock.requireActive).not.toHaveBeenCalled();
+    });
+    it.each([
+      new Error('23P01'), new Error('Reservation_no_overlap'),
+      { cause: new Error('23P01') },
+      new Prisma.PrismaClientKnownRequestError('raw query failed', { code: 'P2010', clientVersion: '6' }),
+    ])('translates database overlap failures to a conflict', async (error) => {
+      const { service } = createService();
+      prismaMock.reservation.findFirst.mockResolvedValue(null);
+      prismaMock.$transaction.mockRejectedValue(error);
+      await expect(service.create(student, dto)).rejects.toBeInstanceOf(ConflictException);
+    });
+    it.each([new Error('connection lost'), 'database unavailable', null, { cause: 'unknown' }])('propagates unrelated failures %j', async (error) => {
+      const { service } = createService();
+      prismaMock.$transaction.mockRejectedValue(error);
+      await expect(service.create(student, dto)).rejects.toBe(error);
+    });
+    it('rejects a short reason before changing a reservation', async () => {
+      const { service } = createService();
+      await expect(service.reject(staff, 'res-1', '  a ')).rejects.toBeInstanceOf(BadRequestException);
+      expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    });
+    it('allows an administrator to approve and audits the transition', async () => {
+      const { service } = createService();
+      prismaMock.reservation.findUnique.mockResolvedValue({ id: 'res-1', status: ReservationStatus.PENDING });
+      txMock.reservation.update.mockResolvedValue({ id: 'res-1', status: ReservationStatus.APPROVED });
+      await service.approve({ ...staff, role: Role.ADMIN }, 'res-1');
+      expect(txMock.auditLog.create).toHaveBeenCalledWith({ data: {
+        actorId: staff.sub, entityType: 'Reservation', entityId: 'res-1', fromValue: 'PENDING', toValue: 'APPROVED',
+      } });
+    });
+  });
+
 });

@@ -262,7 +262,7 @@ HU-07 en UI ya está en `main`.
 | Ítem | Quién | Nota |
 | --- | --- | --- |
 | Recorrido visual escritorio ≥ 1024 px (RNF-09) | **Mateo** | No bloquea HU |
-| Revisión de secretos y endurecimiento para despliegue | **Carlos** | Helmet y CORS ya están; validar configuración sin valores de desarrollo |
+| Revisión de secretos y endurecimiento para despliegue | **Carlos** | **En `feat/deploy-secrets`.** Demo pública en Render (`render.yaml`); overlay Compose para un VPS |
 | Pruebas de transiciones y autorización 403 (HU-16, HU-04) | **Dilan** + **Carlos** | **Integradas en `main`**: 409 de máquina de estados y 403 de `RolesGuard` / cancelar reserva ajena |
 | HU-17 / HU-18 | Nadie | Could; fuera de PI1 |
 
@@ -270,10 +270,10 @@ HU-07 en UI ya está en `main`.
 
 ```
 main
- └─ Carlos: feat/ci
+ └─ Carlos: feat/deploy-secrets
 ```
 
-Para sustentación, el camino crítico de producto y las pruebas E2E ya están en `main`. El trabajo pendiente es integrar este CI y completar la revisión visual y de despliegue.
+Para sustentación, producto, E2E y CI ya están en `main`. La demo con URL pública se hace con el Blueprint de Render de esta rama. Queda el recorrido visual ≥ 1024 px.
 
 ### Fase 6 — Informe y sustentación (semana 16)
 
@@ -350,6 +350,38 @@ Login de desarrollo (seed): `admin@udea.edu.co` / `Admin1234`.
 Postman: importar `docs/postman/SportSpace.postman_collection.json` (`{{baseUrl}}` = `http://localhost:3000`).
 
 Para parar: `docker compose down`. Para BD limpia (borra volumen y datos): `docker compose down -v` y vuelve a `up --build`.
+
+### Demo pública (Render)
+
+SportSpace no va a Vercel: el front es una SPA estática, pero la API es Nest + Prisma + cookies y necesita un proceso Node y PostgreSQL. **Render** levanta eso con los Dockerfiles del repo.
+
+1. Haz merge de `feat/deploy-secrets` a `main` (el Blueprint lee `render.yaml` en `main`).
+2. Crea cuenta en [render.com](https://render.com) e inicia sesión con GitHub.
+3. **New → Blueprint** → elige el repo `SportSpace` y la rama `main`.
+4. Cuando pida `ADMIN_PASSWORD`, pon la clave de demo (no uses `Admin1234` en un host público; anótala para el jurado).
+5. Aplica el Blueprint. Crea Postgres 16 (red privada), la API (servicio privado) y el front (URL HTTPS). El primer build tarda varios minutos.
+6. La URL de la demo es la del servicio `sportspace-web` (`https://sportspace-web.onrender.com` o la que Render asigne). Login: `admin@udea.edu.co` y la clave del paso 4.
+
+El plan gratuito del **front** se duerme tras ~15 min sin tráfico: **abre la URL 10 minutos antes** de la sustentación y espera a que deje de mostrar “spinning up”. Postgres en Render es de pago (el plan por defecto del Blueprint); el equipo debe aceptar ese costo o apagar los servicios después de la demo.
+
+No publiques el servicio `sportspace-api`: el navegador habla con el front y nginx reenvía `/api` por la red interna (mismo origen, la cookie de refresh funciona).
+
+### VPS (alternativa)
+
+Si ya tienen una máquina con Docker:
+
+1. Copia `.env.example` a `.env` (nunca lo subas a Git).
+2. Genera secretos distintos para `JWT_ACCESS_SECRET` y `JWT_REFRESH_SECRET`:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(48).toString('base64'))"
+```
+
+3. Cambia `DB_PASSWORD` y `ADMIN_PASSWORD`. Pon `NODE_ENV=production` y `WEB_ORIGIN` al origen HTTPS público (sin barra final).
+4. Pon TLS delante (Caddy o nginx). Con `NODE_ENV=production` la cookie de refresh lleva `Secure`.
+5. Arranca: `npm run docker:prod`.
+
+La API rechaza arrancar en `production` si los JWT siguen en `change-me-*` o si `WEB_ORIGIN` es localhost.
 
 ### Desarrollo con recarga (API y front en el host)
 

@@ -57,8 +57,9 @@ services:
     dockerContext: .
     healthCheckPath: /
     envVars:
-      - key: API_HOSTPORT
+      # Free web services cannot receive private-network traffic; proxy over HTTPS.
+      - key: API_PUBLIC_URL
         fromService:
           name: sportspace-api
           type: web
-          property: hostport
+          envVarKey: RENDER_EXTERNAL_URL

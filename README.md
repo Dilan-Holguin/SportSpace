@@ -235,7 +235,7 @@ Reparto vigente (swap): **Dilan** = espacios / disponibilidad / reservas; **Carl
 
 El núcleo funcional, el ciclo de reservas, ocupación, roles y filtros HU-08 ya están en `main`. Se añadieron pruebas unitarias Jest para servicios de API y sesión del front, junto con configuración de cobertura para Sonar; los commits recientes reportan 82 % de cobertura. Helmet, CORS y límites de solicitudes en login y creación de reservas ya están implementados.
 
-El API y las pantallas de administración de espacios y horarios/bloqueos (HU-07/HU-10) ya están en `main`. La prueba de concurrencia, los recorridos Playwright y los casos de transiciones/403 también están integrados. El workflow de CI está implementado en `feat/ci`; para habilitar el análisis Sonar en GitHub falta configurar el secreto `SONAR_TOKEN`. HU-17 y HU-18 siguen **fuera de PI1**.
+El API y las pantallas de administración de espacios y horarios/bloqueos (HU-07/HU-10) ya están en `main`. La prueba de concurrencia, los recorridos Playwright y los casos de transiciones/403 también están integrados. El workflow de CI está en `main` con `SONAR_TOKEN`. HU-17 y HU-18 siguen **fuera de PI1**.
 
 Reparto: **Dilan** API (no React) · **Carlos** auth / CI / Docker · **Mateo** front / E2E (no Nest).
 
@@ -254,7 +254,7 @@ HU-07 en UI ya está en `main`.
 | Orden | Rama | Qué | Quién | Depende de |
 | --- | --- | --- | --- | --- |
 | 4 | `feat/race-test` | **Integrado en `main`.** `npm run test:int`: dos `POST /reservations` simultáneos; una `PENDING` y la otra 409. | **Dilan** | Hecho |
-| 5 | `feat/ci` | Workflow agregado: lint, tipos, cobertura unitaria, build, integración PostgreSQL, Playwright y Sonar. Sonar requiere `SONAR_TOKEN` en GitHub. | **Carlos** | Implementado en esta rama |
+| 5 | `feat/ci` | **Integrado en `main`.** Lint, tipos, cobertura, build, integración PostgreSQL, Playwright y Sonar (`SONAR_TOKEN`). | **Carlos** | Hecho |
 | 6 | `feat/e2e-gherkin` | **Integrado en `main`.** Playwright (`npm run test:e2e`) recorre autenticación, catálogo, reservas y administración, incl. HU-07 y HU-10. | **Mateo** | Hecho |
 
 #### P2 — Pulido (si alcanza el tiempo)
@@ -386,7 +386,11 @@ Los specs viven en `apps/web/e2e/` y corren en serie (`workers: 1`) para no choc
 
 El workflow `.github/workflows/ci.yml` se ejecuta en cada PR hacia `main` y en cada push a `main`. Incluye lint, chequeos de tipos, pruebas unitarias con reportes LCOV, build, prueba de concurrencia contra PostgreSQL, Playwright E2E y análisis SonarQube Cloud.
 
-Para habilitar Sonar, agrega `SONAR_TOKEN` en **Settings → Secrets and variables → Actions** del repositorio. Si el secreto falta, las demás comprobaciones corren y el paso de Sonar se omite con un aviso.
+El secreto `SONAR_TOKEN` ya está configurado. Si falta, las demás comprobaciones corren y el paso de Sonar se omite con un aviso.
+
+El plan gratuito de SonarCloud solo permite consultar el Quality Gate de la **rama principal del proyecto en Sonar**. Ese proyecto (`inug4mi_sportspace1`) sigue teniendo `master` como rama principal, mientras GitHub usa `main`; el escáner clasifica entonces `main` como rama corta y `sonar.qualitygate.wait=true` falla con *Organization is not allowed to access data from non main branches*. El workflow mapea el push a GitHub `main` hacia `master` en Sonar y, en los PR, publica el análisis **sin esperar** el Quality Gate.
+
+Opcional (Carlos): en SonarCloud, **Administration → Branches** del proyecto, renombrar o marcar `main` como rama principal y enlazar el repositorio de GitHub. Cuando eso esté hecho, se puede quitar `-Dsonar.branch.name=master` del workflow.
 
 Comprobaciones locales: `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run build`, `npm run test:int` y `npm run test:e2e`. Las dos últimas requieren PostgreSQL; E2E requiere además que la API esté disponible.
 

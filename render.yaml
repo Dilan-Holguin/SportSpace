@@ -17,7 +17,6 @@ services:
     region: ohio
     dockerfilePath: ./apps/api/Dockerfile
     dockerContext: .
-    healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production

@@ -1,9 +1,11 @@
 # Public demo on Render (not Vercel). Connect the GitHub repo as a Blueprint.
 # Dashboard: New → Blueprint → this repository, branch main.
-# WEB_ORIGIN and JWT secrets are wired below; set ADMIN_PASSWORD when Render prompts.
+# All resources use the free plan. Set ADMIN_PASSWORD when Render prompts.
+# Free web services spin down after ~15 minutes idle; free Postgres expires after 30 days.
 
 databases:
   - name: sportspace-db
+    plan: free
     postgresMajorVersion: "16"
     region: ohio
     databaseName: sportspace
@@ -11,12 +13,14 @@ databases:
     ipAllowList: []
 
 services:
-  - type: pserv
+  - type: web
     name: sportspace-api
     runtime: docker
+    plan: free
     region: ohio
     dockerfilePath: ./apps/api/Dockerfile
     dockerContext: .
+    healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
@@ -47,6 +51,7 @@ services:
   - type: web
     name: sportspace-web
     runtime: docker
+    plan: free
     region: ohio
     dockerfilePath: ./apps/web/Dockerfile
     dockerContext: .
@@ -55,5 +60,5 @@ services:
       - key: API_HOSTPORT
         fromService:
           name: sportspace-api
-          type: pserv
+          type: web
           property: hostport

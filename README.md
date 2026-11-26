@@ -359,12 +359,10 @@ SportSpace no va a Vercel: el front es una SPA estática, pero la API es Nest + 
 2. Crea cuenta en [render.com](https://render.com) e inicia sesión con GitHub.
 3. **New → Blueprint** → elige el repo `SportSpace` y la rama `main`.
 4. Cuando pida `ADMIN_PASSWORD`, pon la clave de demo (no uses `Admin1234` en un host público; anótala para el jurado).
-5. Aplica el Blueprint. Crea Postgres 16 (red privada), la API (servicio privado) y el front (URL HTTPS). El primer build tarda varios minutos.
-6. La URL de la demo es la del servicio `sportspace-web` (`https://sportspace-web.onrender.com` o la que Render asigne). Login: `admin@udea.edu.co` y la clave del paso 4.
+5. Aplica el Blueprint. Debe estimar **$0 / month** (plan `free` en Postgres, API y front). Si muestra ~24 USD, cancela: `main` aún no tiene este cambio. El primer build tarda varios minutos.
+6. La URL de la demo es la del servicio `sportspace-web` (`https://sportspace-web.onrender.com` o la que Render asigne). Login: `admin@udea.edu.co` y la clave del paso 4. El API también queda público; el jurado entra por el **front**.
 
-El plan gratuito del **front** se duerme tras ~15 min sin tráfico: **abre la URL 10 minutos antes** de la sustentación y espera a que deje de mostrar “spinning up”. Postgres en Render es de pago (el plan por defecto del Blueprint); el equipo debe aceptar ese costo o apagar los servicios después de la demo.
-
-No publiques el servicio `sportspace-api`: el navegador habla con el front y nginx reenvía `/api` por la red interna (mismo origen, la cookie de refresh funciona).
+El plan gratuito se duerme tras ~15 min sin tráfico: **abre la URL 10 minutos antes** de la sustentación. El Postgres free caduca a los 30 días y solo puede haber uno por workspace.
 
 ### VPS (alternativa)
 

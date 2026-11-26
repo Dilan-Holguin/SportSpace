@@ -613,3 +613,4 @@ El recorrido Must de UI se ejecuta con Playwright (`npm run test:e2e`). Los `.fe
 | 1.24 | 2026-11-16 | Jest HU-16 (409 en transiciones ilegales) y HU-04/HU-14 (403 de estudiante y cancelar reserva ajena) en `feat/transition-403-tests`. |
 | 1.25 | 2026-11-16 | Artículo IEEE de sustentación (problema, monolito vs microservicios, implementación, pruebas, conclusiones) en `docs/ieee/`. |
 | 1.26 | 2026-11-25 | Despliegue público opcional (RNF-02, RNF-10, RNF-12, RNF-15): Blueprint Render (`render.yaml`) para la demo con URL HTTPS; `docker-compose.prod.yml` para un VPS; JWT y `WEB_ORIGIN` públicos son obligatorios en `NODE_ENV=production`. |
+| 1.27 | 2026-11-25 | Blueprint Render en plan `free`: API y front como Web Service públicos; Postgres free (30 días). |

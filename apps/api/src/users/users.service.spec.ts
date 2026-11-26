@@ -21,12 +21,18 @@ describe('UsersService', () => {
         findUnique: jest.fn<(...args: unknown[]) => Promise<unknown>>(),
         create: jest.fn<(...args: unknown[]) => Promise<unknown>>(),
         findMany: jest.fn<(...args: unknown[]) => Promise<unknown>>(),
+        findUniqueOrThrow: jest.fn<(...args: unknown[]) => Promise<unknown>>(),
+        count: jest.fn<(...args: unknown[]) => Promise<number>>(),
+        update: jest.fn<(...args: unknown[]) => Promise<unknown>>(),
       },
     };
+    const auditLog = { create: jest.fn<(...args: unknown[]) => Promise<unknown>>() };
+    const transaction = { ...prisma, auditLog };
+    const database = { ...prisma, $transaction: jest.fn(async (callback: (tx: typeof transaction) => Promise<unknown>) => callback(transaction)) };
     const service = new UsersService(
-      prisma as unknown as PrismaService,
+      database as unknown as PrismaService,
     );
-    return { service, prisma };
+    return { service, prisma, auditLog, database };
   }
 
   it('debería estar definido el servicio', () => {
@@ -41,7 +47,7 @@ describe('UsersService', () => {
       prisma.user.findUnique.mockResolvedValue(null);
       prisma.user.create.mockResolvedValue(user);
 
-      const result = await (service as any).create({
+      const result = await service.create({
         name: user.name,
         email: user.email,
         password: 'strong-password',
@@ -60,7 +66,7 @@ describe('UsersService', () => {
       prisma.user.findUnique.mockResolvedValue(user);
 
       await expect(
-        (service as any).create({
+        service.create({
           name: user.name,
           email: user.email,
           password: 'strong-password',
@@ -77,14 +83,8 @@ describe('UsersService', () => {
       
       prisma.user.findUnique.mockResolvedValue(user);
 
-      // Buscamos dinámicamente según el nombre de tu método real (findOne o findById)
-      const searchMethod = (service as any).findOne || (service as any).findById;
-      
-      if (searchMethod) {
-        const result = await searchMethod.call(service, 'user-1');
-        expect(result).toEqual(user);
-        expect(prisma.user.findUnique).toHaveBeenCalled();
-      }
+      expect(await service.findOne('user-1')).toEqual(user);
+      expect(prisma.user.findUnique).toHaveBeenCalledWith(expect.objectContaining({ where: { id: 'user-1' } }));
     });
 
     it('lanza una excepción NotFoundException si el usuario no existe (Branch Coverage)', async () => {
@@ -92,13 +92,67 @@ describe('UsersService', () => {
       
       prisma.user.findUnique.mockResolvedValue(null);
 
-      const searchMethod = (service as any).findOne || (service as any).findById;
-
-      if (searchMethod) {
-        await expect(
-          searchMethod.call(service, 'user-inexistente'),
-        ).rejects.toBeInstanceOf(NotFoundException);
-      }
+      await expect(service.findOne('user-inexistente')).rejects.toBeInstanceOf(NotFoundException);
     });
   });
+  it('lists users ordered by name', async () => {
+    const { service, prisma } = createService();
+    prisma.user.findMany.mockResolvedValue([user]);
+    expect(await service.list()).toEqual([user]);
+    expect(prisma.user.findMany).toHaveBeenCalledWith(expect.objectContaining({ orderBy: { name: 'asc' } }));
+  });
+
+  it('creates a user when the optional password is absent', async () => {
+    const { service, prisma } = createService();
+    prisma.user.findUnique.mockResolvedValue(null);
+    prisma.user.create.mockResolvedValue(user);
+    await service.create({ name: user.name, email: user.email });
+    expect(prisma.user.create).toHaveBeenCalledWith(expect.objectContaining({
+      data: { name: user.name, email: user.email, passwordHash: 'default-hash' },
+    }));
+  });
+
+  describe('role changes', () => {
+    const actor = { sub: 'admin-1', email: 'admin@udea.edu.co', role: Role.ADMIN };
+    it('rejects missing users before starting a transaction', async () => {
+      const { service, prisma, database } = createService();
+      prisma.user.findUnique.mockResolvedValue(null);
+      await expect(service.updateRole(actor, 'missing', Role.STAFF)).rejects.toBeInstanceOf(NotFoundException);
+      expect(database.$transaction).not.toHaveBeenCalled();
+    });
+    it('returns an unchanged role without updating or auditing', async () => {
+      const { service, prisma, auditLog } = createService();
+      prisma.user.findUnique.mockResolvedValue(user);
+      prisma.user.findUniqueOrThrow.mockResolvedValue(user);
+      expect(await service.updateRole(actor, user.id, Role.STUDENT)).toEqual(user);
+      expect(prisma.user.update).not.toHaveBeenCalled();
+      expect(auditLog.create).not.toHaveBeenCalled();
+    });
+    it.each([0, 1])('protects the last administrator when count is %s', async (count) => {
+      const { service, prisma, database } = createService();
+      prisma.user.findUnique.mockResolvedValue({ ...user, role: Role.ADMIN });
+      prisma.user.count.mockResolvedValue(count);
+      await expect(service.updateRole(actor, user.id, Role.STUDENT)).rejects.toBeInstanceOf(ConflictException);
+      expect(database.$transaction).not.toHaveBeenCalled();
+    });
+    it.each([
+      [Role.STUDENT, Role.STAFF], [Role.STUDENT, Role.ADMIN], [Role.ADMIN, Role.STUDENT],
+    ])('changes %s to %s and records the actor and transition', async (from, to) => {
+      const { service, prisma, auditLog } = createService();
+      prisma.user.findUnique.mockResolvedValue({ ...user, role: from });
+      prisma.user.count.mockResolvedValue(2);
+      prisma.user.update.mockResolvedValue({ ...user, role: to });
+      expect(await service.updateRole(actor, user.id, to)).toMatchObject({ role: to });
+      expect(auditLog.create).toHaveBeenCalledWith({ data: {
+        actorId: actor.sub, entityType: 'User', entityId: user.id, fromValue: from, toValue: to,
+      } });
+    });
+    it('propagates audit errors to the transaction', async () => {
+      const { service, prisma, auditLog } = createService();
+      prisma.user.findUnique.mockResolvedValue(user);
+      auditLog.create.mockRejectedValue(new Error('audit unavailable'));
+      await expect(service.updateRole(actor, user.id, Role.STAFF)).rejects.toThrow('audit unavailable');
+    });
+  });
+
 });

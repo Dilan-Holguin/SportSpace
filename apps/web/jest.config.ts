@@ -1,10 +1,17 @@
 export default {
   rootDir: '.',
   testEnvironment: 'jsdom',
-  testRegex: 'src/.*\\.spec\\.ts$',
-  moduleFileExtensions: ['js', 'json', 'ts'],
+  testRegex: 'src/.*\\.spec\\.tsx?$',
+  moduleFileExtensions: ['js', 'json', 'ts', 'tsx'],
   transform: {
-    '^.+\\.ts$': 'ts-jest',
+    '^.+\\.tsx?$': ['ts-jest', {
+      tsconfig: {
+        module: 'CommonJS',
+        moduleResolution: 'node',
+        jsx: 'react-jsx',
+        esModuleInterop: true,
+      },
+    }],
   },
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',

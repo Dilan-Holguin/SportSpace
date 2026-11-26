@@ -149,7 +149,7 @@ Restante (detalle en el [README](../README.md#plan-de-trabajo-restante-fase-5)):
 | --- | --- | --- | --- | --- |
 | P0 | Must de producto | API para listar inactivos integrada en `main` | — | HU-07 UI en `main` |
 | P1 | Evidencia | `feat/race-test` en `main` (`npm run test:int`) | `feat/ci` (pruebas, build, tipos y Sonar) | `feat/e2e-gherkin` (`npm run test:e2e`) |
-| P2 | Pulido | `feat/transition-403-tests` (HU-16 409 + HU-14 403) | Secretos de despliegue; `feat/transition-403-tests` (HU-04 403) | Recorrido visual ≥ 1024 px |
+| P2 | Pulido | `feat/transition-403-tests` (HU-16 409 + HU-14 403) | `feat/deploy-secrets` (Render Blueprint + Compose prod); `feat/transition-403-tests` (HU-04 403) | Recorrido visual ≥ 1024 px |
 
 HU-08 ya está. HU-17 y HU-18 no se implementan en PI1. Artículo IEEE de sustentación: [ieee/sportspace-articulo.md](ieee/sportspace-articulo.md).
 

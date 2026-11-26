@@ -1,0 +1,60 @@
+# Public demo on Render (not Vercel). Connect the GitHub repo as a Blueprint.
+# Dashboard: New → Blueprint → this repository, branch main.
+# WEB_ORIGIN and JWT secrets are wired below; set ADMIN_PASSWORD when Render prompts.
+
+databases:
+  - name: sportspace-db
+    postgresMajorVersion: "16"
+    region: ohio
+    databaseName: sportspace
+    user: sportspace
+    ipAllowList: []
+
+services:
+  - type: pserv
+    name: sportspace-api
+    runtime: docker
+    region: ohio
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sportspace-db
+          property: connectionString
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: JWT_ACCESS_EXPIRES_IN
+        value: 15m
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 7d
+      - key: ADMIN_EMAIL
+        value: admin@udea.edu.co
+      - key: ADMIN_NAME
+        value: SportSpace Admin
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: WEB_ORIGIN
+        fromService:
+          name: sportspace-web
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+
+  - type: web
+    name: sportspace-web
+    runtime: docker
+    region: ohio
+    dockerfilePath: ./apps/web/Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: API_HOSTPORT
+        fromService:
+          name: sportspace-api
+          type: pserv
+          property: hostport
